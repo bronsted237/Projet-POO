@@ -1,0 +1,90 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+
+public class SupprimerUtilisateur extends javax.swing.JFrame {
+
+```
+private Connection con;
+private PreparedStatement pst;
+private JTable jTable1;
+
+// -------------------------------------------------------
+// Connexion à la base de données
+// -------------------------------------------------------
+private void connect() {
+    try {
+        Class.forName("com.mysql.cj.jdbc.Driver"); // ou "org.sqlite.JDBC" selon ta BD
+        con = DriverManager.getConnection(
+            "jdbc:mysql://localhost:3306/nom_de_ta_base", // à adapter
+            "root",   // ton utilisateur
+            ""        // ton mot de passe
+        );
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(null, "Erreur de connexion à la base de données");
+        e.printStackTrace();
+    }
+}
+
+// -------------------------------------------------------
+// Rafraîchir le tableau (à implémenter selon ton projet)
+// -------------------------------------------------------
+private void Table() {
+    // Recharge les données dans jTable1
+    // Exemple : remplir le DefaultTableModel depuis la BD
+}
+
+// -------------------------------------------------------
+// Action du bouton Supprimer
+// -------------------------------------------------------
+private void btnSupprimerActionPerformed(java.awt.event.ActionEvent evt) {
+    try {
+        // Récupérer la ligne sélectionnée dans le tableau
+        int selectedRow = jTable1.getSelectedRow();
+
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(null, "Veuillez sélectionner un utilisateur à supprimer");
+            return;
+        }
+
+        // Récupérer l'identifiant de l'utilisateur sélectionné (colonne 0)
+        String username = jTable1.getValueAt(selectedRow, 0).toString();
+
+        // Confirmation avant suppression
+        int confirm = JOptionPane.showConfirmDialog(
+            null,
+            "Voulez-vous vraiment supprimer l'utilisateur : " + username + " ?",
+            "Confirmation",
+            JOptionPane.YES_NO_OPTION
+        );
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            connect();
+            pst = con.prepareStatement("DELETE FROM utilisateurs WHERE username = ?");
+            pst.setString(1, username);
+            pst.execute();
+            con.close();
+
+            JOptionPane.showMessageDialog(null, "Utilisateur supprimé avec succès");
+
+            // Rafraîchir le tableau
+            Table();
+        }
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(null, "Erreur lors de la suppression");
+        e.printStackTrace();
+    }
+}
+
+// -------------------------------------------------------
+// Main (point d'entrée pour test autonome)
+// -------------------------------------------------------
+public static void main(String[] args) {
+    java.awt.EventQueue.invokeLater(() -> new SupprimerUtilisateur().setVisible(true));
+}
+```
+
+}
