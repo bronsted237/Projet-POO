@@ -4,6 +4,13 @@
  */
 package bibliotheque;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author HP
@@ -15,7 +22,47 @@ public class gestionlivres extends javax.swing.JFrame {
      */
     public gestionlivres() {
         initComponents();
+        Table();
     }
+     Connection con;
+    PreparedStatement pst;
+    ResultSet rs;
+    public void connect() {
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+			con=DriverManager.getConnection("jdbc:mysql://localhost/bibliothèques","root","");
+			System.out.println("connection reussie");
+		} catch(Exception e) {
+			System.err.println(e); //on affiche l'erreur
+		}
+ }
+    private void Table() {
+    try {
+        connect();
+        String[] entete = {"id_livre", "titre_du_livre", "auteur", "Categorie", "Nombre_examplaires"};
+        DefaultTableModel model = new DefaultTableModel(null, entete);
+
+        String sql = "SELECT * FROM livres";
+        java.sql.Statement st = con.createStatement();
+        rs = st.executeQuery(sql);
+
+        while (rs.next()) {
+            String[] ligne = new String[5];
+            ligne[0] = rs.getString("id_livre");
+            ligne[1] = rs.getString("titre_du_livre");
+            ligne[2] = rs.getString("auteurs");
+            ligne[3] = rs.getString("Categorie");
+            ligne[4] = rs.getString("Nombre_examplaire");
+            model.addRow(ligne);
+        }
+
+        table.setModel(model);
+        con.close();
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -43,19 +90,19 @@ public class gestionlivres extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         textField1 = new java.awt.TextField();
         jPanel3 = new javax.swing.JPanel();
-        textField2 = new java.awt.TextField();
-        textField3 = new java.awt.TextField();
+        titre = new java.awt.TextField();
+        auteur = new java.awt.TextField();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        liste1 = new javax.swing.JComboBox<>();
         jLabel2 = new javax.swing.JLabel();
-        jComboBox2 = new javax.swing.JComboBox<>();
+        liste2 = new javax.swing.JComboBox<>();
         jLabel7 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         button2 = new java.awt.Button();
         button3 = new java.awt.Button();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        table = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -78,6 +125,11 @@ public class gestionlivres extends javax.swing.JFrame {
         jButton3.setForeground(new java.awt.Color(255, 255, 255));
         jButton3.setText("Emprunts");
         jButton3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jButton4.setBackground(new java.awt.Color(0, 0, 102));
         jButton4.setForeground(new java.awt.Color(204, 0, 0));
@@ -85,20 +137,14 @@ public class gestionlivres extends javax.swing.JFrame {
         jButton4.setActionCommand("Déconexion");
         jButton4.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        jLabel8.setIcon(new javax.swing.ImageIcon("C:\\Users\\HP\\Desktop\\icons8-livre-50.png")); // NOI18N
-
         jLabel9.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel9.setIcon(new javax.swing.ImageIcon("C:\\Users\\HP\\Desktop\\icons8-conférence-téléphonique-30.png")); // NOI18N
 
         jLabel11.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel11.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel11.setIcon(new javax.swing.ImageIcon("C:\\Users\\HP\\Desktop\\icons8-user-male-48.png")); // NOI18N
 
         jLabel12.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel12.setForeground(new java.awt.Color(255, 255, 255));
         jLabel12.setText("Administrateur");
-
-        jLabel13.setIcon(new javax.swing.ImageIcon("C:\\Users\\HP\\Desktop\\icons8-emprunter-un-livre-52.png")); // NOI18N
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -141,18 +187,19 @@ public class gestionlivres extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel12)
                 .addGap(80, 80, 80)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel8))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel4)
+                        .addComponent(jLabel8)))
                 .addGap(61, 61, 61)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel9))
                 .addGap(49, 49, 49)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel13, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(202, 202, 202))
@@ -164,6 +211,11 @@ public class gestionlivres extends javax.swing.JFrame {
         button1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         button1.setForeground(new java.awt.Color(255, 255, 255));
         button1.setLabel("+ Ajouter un livre");
+        button1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button1ActionPerformed(evt);
+            }
+        });
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel1.setText("Gestion des livres");
@@ -183,13 +235,13 @@ public class gestionlivres extends javax.swing.JFrame {
         jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel6.setText("Auteur ");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        liste1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Catégorie ");
 
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        liste2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -209,10 +261,10 @@ public class gestionlivres extends javax.swing.JFrame {
                     .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(39, 39, 39)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jComboBox2, 0, 258, Short.MAX_VALUE)
-                    .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(textField2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(textField3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(liste2, 0, 258, Short.MAX_VALUE)
+                    .addComponent(liste1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(titre, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(auteur, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(25, 25, 25))
         );
         jPanel3Layout.setVerticalGroup(
@@ -220,22 +272,22 @@ public class gestionlivres extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(41, 41, 41)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(textField2, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(titre, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5))
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(24, 24, 24)
-                        .addComponent(textField3, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(auteur, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(35, 35, 35)
                         .addComponent(jLabel6)))
                 .addGap(22, 22, 22)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(liste1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
                 .addGap(30, 30, 30)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(liste2, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel7))
                 .addContainerGap(35, Short.MAX_VALUE))
         );
@@ -248,6 +300,11 @@ public class gestionlivres extends javax.swing.JFrame {
         button2.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         button2.setForeground(new java.awt.Color(255, 255, 255));
         button2.setLabel("Enregistrer");
+        button2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button2ActionPerformed(evt);
+            }
+        });
 
         button3.setBackground(new java.awt.Color(204, 0, 0));
         button3.setForeground(new java.awt.Color(255, 255, 255));
@@ -258,7 +315,7 @@ public class gestionlivres extends javax.swing.JFrame {
             }
         });
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -269,7 +326,7 @@ public class gestionlivres extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(table);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -346,7 +403,69 @@ public class gestionlivres extends javax.swing.JFrame {
 
     private void button3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button3ActionPerformed
         // TODO add your handling code here:
+        titre.setText("");
+        auteur.setText("");
+        liste1.setSelectedIndex(0);
+        liste2.setSelectedIndex(0);
+        
+        
+     
     }//GEN-LAST:event_button3ActionPerformed
+
+    private void button2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button2ActionPerformed
+        // TODO add your handling code here:
+        try {
+					connect();
+					pst=con.prepareStatement("insert into livres  (titre_du_livre, auteurs, Categorie, Nombre_examplaire)values(?,?,?,?)");
+					pst.setString(1, titre.getText());
+					pst.setString(2, auteur.getText());
+                                        pst.setString(3, (String) liste1.getSelectedItem());
+                                        pst.setString(4, (String) liste2.getSelectedItem());
+                                     
+			
+
+                                        pst.execute();
+					con.close();
+					   JOptionPane.showMessageDialog(null,"message envoyer avec success");
+				
+				} catch (Exception e2) {
+					JOptionPane.showMessageDialog(null, "impossible d\'ajouter, Verifiez tous les champs");
+						e2.printStackTrace();
+                                }
+        
+    }//GEN-LAST:event_button2ActionPerformed
+
+    private void button1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button1ActionPerformed
+        // TODO add your handling code here:
+        try {
+    connect();
+    pst = con.prepareStatement("SELECT * FROM livres WHERE titre_du_livre = ?");
+    pst.setString(1, titre.getText());
+
+    ResultSet rs = pst.executeQuery();
+
+    if (rs.next()) {
+        // ✅ Livre trouvé — remplir les champs
+        auteur.setText(rs.getString("auteurs"));
+        liste1.setSelectedItem(rs.getString("Categorie"));
+        liste2.setSelectedItem(rs.getString("Nombre_examplaire"));
+
+        JOptionPane.showMessageDialog(null, "Livre trouvé avec succès");
+    } else {
+        JOptionPane.showMessageDialog(null, "Aucun livre trouvé avec ce titre");
+    }
+
+    con.close();
+
+} catch (Exception e2) {
+    JOptionPane.showMessageDialog(null, "Erreur lors de la recherche");
+    e2.printStackTrace();
+}
+    }//GEN-LAST:event_button1ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -384,6 +503,7 @@ public class gestionlivres extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private java.awt.TextField auteur;
     private java.awt.Button button1;
     private java.awt.Button button2;
     private java.awt.Button button3;
@@ -391,8 +511,6 @@ public class gestionlivres extends javax.swing.JFrame {
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
-    private javax.swing.JComboBox<String> jComboBox1;
-    private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -410,9 +528,10 @@ public class gestionlivres extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JComboBox<String> liste1;
+    private javax.swing.JComboBox<String> liste2;
+    private javax.swing.JTable table;
     private java.awt.TextField textField1;
-    private java.awt.TextField textField2;
-    private java.awt.TextField textField3;
+    private java.awt.TextField titre;
     // End of variables declaration//GEN-END:variables
 }
