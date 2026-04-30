@@ -1,0 +1,3 @@
+nom_nouvelle_page jacc = new nom_nouvelle_page;
+jacc.setVisible(true);
+super.dispose;
