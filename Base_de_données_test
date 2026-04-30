@@ -1,0 +1,179 @@
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Hôte : 127.0.0.1
+-- Généré le : jeu. 30 avr. 2026 à 05:08
+-- Version du serveur : 10.4.32-MariaDB
+-- Version de PHP : 8.2.12
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Base de données : `bibliothèques`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `auteurs`
+--
+
+CREATE TABLE `auteurs` (
+  `id auteur` int(40) NOT NULL,
+  `noms auteur` varchar(40) NOT NULL,
+  `Date de naissance` varchar(40) NOT NULL,
+  `Tel` varchar(40) NOT NULL,
+  `Email` varchar(40) NOT NULL,
+  `Adresse` varchar(40) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `ecrire`
+--
+
+CREATE TABLE `ecrire` (
+  `id livre` int(11) NOT NULL,
+  `id auteur` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `emprunt`
+--
+
+CREATE TABLE `emprunt` (
+  `id emprunt` int(11) NOT NULL,
+  `date emprunt` date NOT NULL,
+  `date de restitution` date NOT NULL,
+  `id livre` int(11) NOT NULL,
+  `id utilisateur` int(11) NOT NULL,
+  `Statut` varchar(15) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `livres`
+--
+
+CREATE TABLE `livres` (
+  `id livre` int(10) NOT NULL,
+  `titre_du_livre` varchar(60) NOT NULL,
+  `auteurs` varchar(40) NOT NULL,
+  `Categorie` varchar(60) NOT NULL,
+  `Nombre_examplaire` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `utilisateur`
+--
+
+CREATE TABLE `utilisateur` (
+  `id utilisateur` int(10) NOT NULL,
+  `noms utilisateur` varchar(30) NOT NULL,
+  `Premons` varchar(30) NOT NULL,
+  `Tel` varchar(30) NOT NULL,
+  `Email` varchar(40) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Index pour les tables déchargées
+--
+
+--
+-- Index pour la table `auteurs`
+--
+ALTER TABLE `auteurs`
+  ADD PRIMARY KEY (`id auteur`);
+
+--
+-- Index pour la table `ecrire`
+--
+ALTER TABLE `ecrire`
+  ADD KEY `ecrire_ibfk_1` (`id auteur`),
+  ADD KEY `id livre` (`id livre`);
+
+--
+-- Index pour la table `emprunt`
+--
+ALTER TABLE `emprunt`
+  ADD PRIMARY KEY (`id emprunt`),
+  ADD KEY `emprunt_ibfk_1` (`id livre`),
+  ADD KEY `id utilisateur` (`id utilisateur`);
+
+--
+-- Index pour la table `livres`
+--
+ALTER TABLE `livres`
+  ADD PRIMARY KEY (`id livre`);
+
+--
+-- Index pour la table `utilisateur`
+--
+ALTER TABLE `utilisateur`
+  ADD PRIMARY KEY (`id utilisateur`);
+
+--
+-- AUTO_INCREMENT pour les tables déchargées
+--
+
+--
+-- AUTO_INCREMENT pour la table `auteurs`
+--
+ALTER TABLE `auteurs`
+  MODIFY `id auteur` int(40) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `emprunt`
+--
+ALTER TABLE `emprunt`
+  MODIFY `id emprunt` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `livres`
+--
+ALTER TABLE `livres`
+  MODIFY `id livre` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT pour la table `utilisateur`
+--
+ALTER TABLE `utilisateur`
+  MODIFY `id utilisateur` int(10) NOT NULL AUTO_INCREMENT;
+
+--
+-- Contraintes pour les tables déchargées
+--
+
+--
+-- Contraintes pour la table `ecrire`
+--
+ALTER TABLE `ecrire`
+  ADD CONSTRAINT `ecrire_ibfk_1` FOREIGN KEY (`id auteur`) REFERENCES `auteurs` (`id auteur`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `ecrire_ibfk_2` FOREIGN KEY (`id livre`) REFERENCES `livres` (`id livre`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Contraintes pour la table `emprunt`
+--
+ALTER TABLE `emprunt`
+  ADD CONSTRAINT `emprunt_ibfk_1` FOREIGN KEY (`id livre`) REFERENCES `livres` (`id livre`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `emprunt_ibfk_2` FOREIGN KEY (`id utilisateur`) REFERENCES `utilisateur` (`id utilisateur`);
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
